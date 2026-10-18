@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Krzyżówki</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;800&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#efe9ff;--card:#fff;--ink:#1d1340;--mut:#6e62a0;--cell:#fff;--line:#1d1340;--hl:#ffe45c;--ok:#4ee3a8;--f:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#150d33;--card:#241a4d;--ink:#f3eeff;--mut:#b2a6e0;--cell:#2a1f5a;--line:#08041a;--hl:#5b49b8}}
+:root[data-theme=dark]{--bg:#150d33;--card:#241a4d;--ink:#f3eeff;--mut:#b2a6e0;--cell:#2a1f5a;--line:#08041a;--hl:#5b49b8}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;font:500 16px/1.35 var(--f);color:var(--ink);background:var(--bg);min-height:100vh}
+button{font:inherit;cursor:pointer;color:inherit}
+main{max-width:640px;margin:0 auto;padding:20px 16px 48px}
+.h1{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:10px 0 12px;font:800 clamp(28px,9vw,44px)/1 var(--f)}
+.h1 span{width:1.4em;height:1.4em;display:grid;place-items:center;border:2px solid var(--line);border-radius:10px;box-shadow:0 4px 0 var(--line);color:#1d1340;background:#fff;transform:rotate(2deg)}
+.h1 span:nth-child(even){transform:rotate(-3deg)}
+.h1 span:nth-child(4n+1){background:#ff9ccf}.h1 span:nth-child(4n+2){background:#ffe45c}.h1 span:nth-child(4n+3){background:#7ef0c4}.h1 span:nth-child(4n){background:#b9a6ff}
+@media(prefers-reduced-motion:no-preference){.h1 span{animation:pop .5s backwards;animation-delay:calc(var(--i)*60ms)}}
+@keyframes pop{from{transform:scale(0) rotate(-20deg)}}
+.sub{text-align:center;color:var(--mut);margin:0 auto 18px;max-width:34ch}
+.big{display:block;margin:0 auto 22px;border:2px solid var(--line);border-radius:999px;padding:13px 26px;font:800 18px var(--f);background:#ff5fa8;color:#1d1340;box-shadow:0 4px 0 var(--line)}
+.big:active,.th:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.th{border:2px solid var(--line);border-radius:20px;padding:16px;text-align:left;display:grid;gap:2px;color:#1d1340;background:var(--c);box-shadow:0 4px 0 var(--line)}
+.th em{font-size:36px;font-style:normal;line-height:1.2}.th b{font:800 20px var(--f)}.th small{font-weight:500}
+.back,.tools button{border:2px solid var(--line);border-radius:999px;padding:7px 14px;font-weight:800;background:var(--card);box-shadow:0 2px 0 var(--line)}
+h2{font:800 30px var(--f);margin:16px 0}
+.lv{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:12px}
+.lv button{border:2px solid var(--line);border-radius:18px;padding:14px 6px;background:var(--card);font:800 26px var(--f);display:grid;gap:2px;box-shadow:0 3px 0 var(--line)}
+.lv small{font:500 12px var(--f);color:var(--mut)}
+.lv .ok{background:var(--ok);color:#1d1340}.lv .ok small{color:#1d1340}
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.top>b{flex:1;font:800 18px var(--f);min-width:0}
+.tools{display:flex;gap:6px}
+.clue{display:flex;align-items:center;gap:8px;margin-top:12px;background:var(--card);border:2px solid var(--line);border-radius:16px;padding:6px;box-shadow:0 3px 0 var(--line)}
+.clue p{flex:1;margin:0;font-weight:700}
+.clue p i{font-style:normal;background:#ff5fa8;color:#1d1340;border-radius:8px;padding:1px 7px;margin-right:6px;font-size:13px;white-space:nowrap}
+.clue button{width:40px;height:40px;border:2px solid var(--line);border-radius:12px;background:#ffe45c;color:#1d1340;font:800 22px var(--f)}
+.grid{--cs:max(24px,min(50px,calc((min(100vw,640px) - 40px - var(--n)*3px)/var(--n))));display:grid;gap:3px;justify-content:safe center;max-width:100%;overflow-x:auto;padding:4px;margin:12px auto}
+.grid i{width:var(--cs);height:var(--cs)}
+.grid b{position:relative;width:var(--cs);height:var(--cs);display:grid;place-items:center;background:var(--cell);border:2px solid var(--line);border-radius:calc(var(--cs)*.2);font:800 calc(var(--cs)*.5)/1 var(--f);box-shadow:0 2px 0 var(--line);cursor:pointer;user-select:none;-webkit-user-select:none}
+.grid b s{position:absolute;top:1px;left:3px;font:800 calc(var(--cs)*.26)/1 var(--f);text-decoration:none;opacity:.7}
+.grid b.w{background:var(--hl);color:#1d1340}
+.grid b.a{background:var(--act,#ff5fa8);color:#1d1340;transform:translateY(-2px);box-shadow:0 4px 0 var(--line);z-index:1}
+.grid b.bad{background:#ff4d4d;color:#fff}
+.grid b.gv{background:var(--ok);color:#1d1340}
+.kb{display:none;gap:6px;margin:6px 0 14px}
+@media(pointer:coarse){.kb{display:grid}}
+.kb div{display:flex;gap:4px;justify-content:center}
+.kb button{flex:1;max-width:40px;height:46px;padding:0;border:2px solid var(--line);border-radius:10px;background:var(--cell);font:800 17px var(--f);box-shadow:0 2px 0 var(--line)}
+.kb button:active{background:#ffe45c;color:#1d1340}
+.lists{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px;font-size:14px}
+.lists h3{margin:0 0 6px;font:800 17px var(--f)}
+ol{list-style:none;padding:0;margin:0;display:grid;gap:4px}
+li{padding:6px 8px;border-radius:10px;cursor:pointer}
+li.on{background:var(--hl);color:#1d1340}li.dn{opacity:.45;text-decoration:line-through}
+li b{color:#ff5fa8;margin-right:4px}
+#win{position:fixed;inset:0;z-index:9;display:grid;place-items:center;background:rgba(15,8,40,.75);padding:16px}
+#win div{background:var(--bg);border:2px solid var(--line);border-radius:28px;padding:30px 26px;text-align:center;box-shadow:0 6px 0 var(--line)}
+#win em{display:block;font-size:64px;font-style:normal;animation:pop .6s}
+#win h2{margin:6px 0 16px}
+#win .big{margin:10px auto 0}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#1d1340;color:#fff;border-radius:999px;padding:10px 18px;font-weight:700;z-index:10}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.coin{font:800 17px var(--f);background:#ffe45c;color:#1d1340;border:2px solid var(--line);border-radius:999px;padding:5px 12px;box-shadow:0 2px 0 var(--line)}
+.th.lk{filter:saturate(.35)}
+.lv i{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);margin:0 auto}
+.lv .eq{background:var(--hl);color:#1d1340}
+main h3{font:800 20px var(--f);margin:24px 0 10px}
+.wm{font:800 24px var(--f);margin:0 0 12px}.wm small{font:500 14px var(--f);color:var(--mut)}
+</style>
+</head>
+<body>
+<main>
+<section id="home">
+ <div class="bar"><button class="back" id="shopb">🛍️ Sklep</button><span class="coin"></span></div>
+ <h1 class="h1" id="h" aria-label="Krzyżówki"></h1>
+ <p class="sub">Wybierz motyw i odgaduj hasła. Wpisuj bez ogonków: ż to z, ł to l.</p>
+ <button class="big" id="rnd">🎲 Wylosuj krzyżówkę</button>
+ <div class="themes" id="themes"></div>
+</section>
+<section id="lvl" hidden>
+ <button class="back" id="b1">Wróć</button>
+ <h2 id="lt"></h2>
+ <div class="lv" id="lv"></div>
+</section>
+<section id="game" hidden>
+ <div class="top"><button class="back" id="b2">Wróć</button><b id="gt"></b><span class="coin"></span><div class="tools"><button id="chk">Sprawdź</button><button id="hnt">Podpowiedź 3 🪙</button></div></div>
+ <div class="clue"><button id="pv" aria-label="Poprzednie hasło">‹</button><p id="cl"></p><button id="nx" aria-label="Następne hasło">›</button></div>
+ <div class="grid" id="grid"></div>
+ <div class="kb" id="kb"></div>
+ <div class="lists"><div><h3>Poziomo</h3><ol id="lA"></ol></div><div><h3>Pionowo</h3><ol id="lD"></ol></div></div>
+</section>
+<section id="shop" hidden>
+ <div class="bar"><button class="back" id="b3">Wróć</button><span class="coin"></span></div>
+ <h2>Sklep</h2>
+ <p class="sub" style="max-width:46ch">Monety dostajesz za krzyżówki: 20 za nową, 10 więcej bez podpowiedzi i 25 za każdą piątą. Podpowiedź kosztuje 3.</p>
+ <h3>Specjalne krzyżówki (po 11 haseł)</h3><div class="themes" id="sps"></div>
+ <h3>Kolor aktywnego pola</h3><div class="lv" id="sks"></div>
+</section>
+<div id="win" hidden><div><em>🎉</em><h2>Zaliczone!</h2><p id="wm" class="wm"></p><button class="big" id="nx2">Następna krzyżówka</button><button class="big" id="mn" style="background:var(--card)">Menu</button></div></div>
+<div id="toast" hidden></div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const T=[
+{n:'Slang i słowo roku',e:'💬',c:'#ffe45c',w:'SIGMA=Pewny siebie typ, słowo roku 2024|ESSA=Okrzyk radości i luzu, słowo roku 2022|CRINGE=Coś żenującego, aż wstyd patrzeć|GIT=Slangowe „super” albo „w porządku”|RIZZ=Slangowa charyzma w podrywaniu kogoś|ODKLEJKA=Stan oderwania od rzeczywistości|NAURA=Pożegnanie złożone ze słów „na razie”|SLAY=Angielskie „zabić”, w slangu: zrobić coś genialnie|AURA=Slangowe „punkty” za zachowanie, które robi wrażenie|REL=Skrót z angielskiego: „to jak o mnie”, słowo roku 2023|BRAT=Zwrot do kumpla: „siema, …”|SPIULKOLOT=Miejsce do spania, słowo roku 2021|DELULU=Ktoś z urojeniami i głową w chmurach, od angielskiego „delusional”|GOAT=Skrót: największy w historii, po angielsku też „koza”|NPC=Postać w grze sterowana przez komputer; slangowo: ktoś bez własnego zdania|BAMBIK=Młodsza, niedoświadczona osoba, od jelonka z bajki|CZEMO=Slangowe „dlaczego”, brzmi jak „czemu” z ó na końcu|BRAINROT=Angielskie „zgnilizna mózgu”: efekt oglądania bezmyślnych memów|SKIBIDI=Pierwsze słowo memu o toalecie ze śpiewającą głową|YAPPING=Angielskie „szczekanie”: długie, nudne gadanie bez końca|OPOROWO=Slangowo: ciężko, pod górkę, z oporem|KOZAK=Pochwała: „ale z ciebie …!”|FLEX=Angielskie „napinanie mięśni”: chwalenie się kasą lub rzeczami|SUS=Skrót od „suspicious”: podejrzany jak impostor w Among Us|GHOSTING=Znikanie z czyjegoś życia bez słowa, jak duch po angielsku|SZTOS=Coś niesamowitego, np. „to jest …!”|ZIOMEK=Kumpel, zdrobnienie od „ziom”|LOWKEY=Angielskie „po cichu”, np. „… fajne”|VIBE=Angielskie „wibracje”: klimat albo nastrój|MOOD=Angielskie „nastrój”; komentarz do mema „to ja”|CRUSH=Osoba, w której skrycie się podkochujesz'},
+{n:'Ekipa i YouTube',e:'📺',c:'#ff9ccf',w:'FRIZ=Pseudonim Karola Wiśniewskiego, założyciela Ekipy|EKIPA=Kanał na YouTube założony przez Friza w 2018 roku|VLOG=Wideo-pamiętnik|MATA=Młody raper, z którym porównywano Friza jako idola młodych|DAILY=Angielskie „codzienny”: projekt Friza z filmami z domu Ekipy każdego dnia|WERSOW=Nick Weroniki Sowy, influencerki z Ekipy i dziewczyny Friza|TROMBA=Członek Ekipy, nick brzmi jak włoska trąbka|PATECKI=Członek Ekipy, nick brzmi jak nazwisko|PRANK=Angielskie „psikus”: żart robiony komuś dla kamery|KANAL=Twoja strona na YouTubie, na której są filmy|LODY=Zimny deser, który Ekipa wypuściła w sklepach|CHMURKA=Biały piesek rasy szpic, mieszkaniec domu Ekipy|GONCIARZ=Youtuber, który nagrał 50-minutowy dokument o domu Ekipy|ORANZADA=Gazowany napój z logo Ekipy|ZESZYT=Szkolny gadżet z logo Ekipy do pisania|KAMERA=Nagrywa filmy do sieci|PLYTA=Nośnik z muzyką; Ekipa nagrała taką o nazwie „Sezon 3”|SUBSKRYBUJ=Kliknij, żeby nie przegapić filmów|NAPISY=Tekst widoczny na dole filmu|MINIATURA=Obrazek zachęcający do kliknięcia|MONTAZ=Cięcie i sklejanie nagrania|WYZWANIE=Polskie słowo na „challenge”|MAFIA=Gra towarzyska, z której Friz zrobił program IRL na YouTubie|HEJT=Wredny komentarz pod filmem|INFLUENCER=Twórca z dużym zasięgiem|REAKCJA=Film, w którym oglądasz cudze wideo|GIVEAWAY=Rozdawanie nagród widzom|REKLAMA=Sponsorowana część filmu|TELEDYSK=Pełna nazwa filmu do piosenki|STREAM=Transmisja na żywo w sieci|TRAILER=Zwiastun filmu'},
+{n:'TikTok i social',e:'📱',c:'#8ed8ff',w:'TIKTOK=Aplikacja z krótkimi tańcami|MEM=Śmieszny obrazek z internetu|LAJK=Serduszko lub kciuk pod postem|GIF=Zapętlony ruchomy obrazek|POST=Pojedynczy wpis lub zdjęcie na Twoim profilu|HASHTAG=Znaczek # przed słowem|FILTR=Dodaje psie uszy na selfie|STORY=Zdjęcie, które znika po dobie|TAG=Oznaczenie kogoś na zdjęciu lub poście|FEED=Przewijana lista postów na stronie głównej|BOT=Fałszywe konto prowadzone przez program|SELFIE=Zdjęcie zrobione samemu sobie|EMOJI=Małe buźki w wiadomościach|WIRAL=Coś, co obiegło cały internet|APKA=Potocznie: aplikacja na telefon|DUET=Film nagrany obok cudzego na TikToku|LIVE=Transmisja na żywo na Instagramie|KOMENTARZ=Odpowiedź pod postem|PROFIL=Twoja strona w social mediach|INSTAGRAM=Aplikacja ze zdjęciami i rolkami|TREND=Coś, co robią wszyscy w tym tygodniu|SCROLL=Przewijanie bez końca|MUTE=Angielskie „wycisz”: żeby nie widzieć czyichś postów|KONTO=Twoje miejsce w aplikacji, wchodzisz na nie loginem i hasłem|SNAPCHAT=Aplikacja z żółtym logo z duszkiem|REELS=Krótkie pionowe wideo na Instagramie|OBSERWUJ=Klikasz, żeby widzieć czyjeś posty|UDOSTEPNIJ=Wyślij post dalej|ALGORYTM=Decyduje, co widzisz w feedzie|ZASIEGI=Tyle osób zobaczyło post|SERDUSZKO=Reakcja pod zdjęciem'},
+{n:'Gry i streamy',e:'🎮',c:'#b9a6ff',w:'MARIO=Hydraulik w czerwonej czapce|BOSS=Najtrudniejszy wróg na końcu poziomu|PAD=Kontroler w dłoniach, przez który grasz na konsoli|LAG=Zacięcia przez słaby internet|NOOB=Ktoś, kto dopiero zaczyna grać|ROBLOX=Platforma z grami robionymi przez graczy|LEVEL=Kolejny poziom w grze|SKIN=Wygląd postaci kupowany w grze|CLAN=Drużyna graczy|ZELDA=Księżniczka, której szuka Link|QUEST=Zadanie od postaci w grze|MINECRAFT=Gra, w której kopiesz i budujesz z kostek|CREEPER=Zielony wróg, który syczy i wybucha|PIXEL=Najmniejszy punkt na ekranie|LOOT=Zdobycze po wygranej walce|ARENA=Plac walki w grze|STEAM=Sklep z grami na komputer|FORTNITE=Gra, w której tańczysz po wygranej|KONSOLA=Urządzenie do grania, np. PlayStation lub Xbox|RANKING=Lista najlepszych graczy|RESPAWN=Odrodzenie po śmierci w grze|TWITCH=Fioletowa platforma do streamów|GRACZ=Osoba, która gra w gry|GILDIA=Klan z gier fantasy|AMONGUS=Gra o załodze statku kosmicznego i zdrajcy, dwa słowa razem|IMPOSTOR=Zdrajca w grze z kosmitami|POKEMON=Łap je wszystkie|SERWER=Komputer, na którym spotykają się gracze|TURNIEJ=Zawody graczy|EKWIPUNEK=Plecak postaci w grze|PUNKTY=Wynik w grze'},
+{n:'Muzyka i rap',e:'🎧',c:'#7ef0c4',w:'RAPER=Artysta, który nawija|HIT=Piosenka, którą grają wszędzie|BIT=Rytmiczny podkład, pod który raper nawija|FLOW=Angielskie „płynięcie”: styl i rytm nawijania rapera|SCENA=Stoi na niej artysta|KONCERT=Występ artysty na żywo|GITARA=Instrument z sześcioma strunami|REFREN=Powtarzana część piosenki|TRAP=Gatunek rapu z ciężkim basem|FANI=Wielbiciele artysty|WOKAL=Śpiewanie w piosence|SPOTIFY=Zielona aplikacja z muzyką|KLIP=Krótka nazwa teledysku|ALBUM=Cała płyta z piosenkami|REMIX=Nowa wersja starej piosenki|MERCH=Koszulki z logo artysty|TANIEC=Ruch do rytmu|PLAYLISTA=Lista ulubionych piosenek|MIKROFON=Trzyma go piosenkarz|ZWROTKA=Część piosenki między refrenami|GLOSNIK=Wydaje dźwięk z telefonu|DEBIUT=Pierwsza płyta artysty|BATTLE=Pojedynek raperów|KARAOKE=Śpiewanie z tekstem na ekranie|SLUCHAWKI=Nosisz je na uszach|FESTIWAL=Muzyczna impreza pod namiotem|SINGIEL=Pojedyncza piosenka na premierę|AUTOGRAF=Podpis gwiazdy|PERKUSJA=Bębny w zespole|AUTOTUNE=Efekt, który wygładza głos|FREESTYLE=Rap z głowy bez kartki'},
+{n:'Szkoła i życie',e:'🎒',c:'#ffb27a',w:'SEN=Tego brakuje przed sprawdzianem|KAWA=Poranna dawka energii|KLASA=Grupa uczniów w jednej sali|OCENA=Jedynka albo szóstka|WIFI=Hasło, o które pytasz w gościach|SZKOLA=Tu chodzisz od rana|LEKCJA=45 minut z nauczycielem|MATMA=Potocznie: przedmiot z liczbami i wzorami|FERIE=Zimowa przerwa od nauki|KEBAB=Szybki obiad po lekcjach|PIZZA=Włoski placek, hit na imprezie|PLECAK=Nosisz w nim książki na plecach|PIORNIK=Chowasz w nim długopisy|SCIAGA=Potajemna pomoc na sprawdzianie|WAGARY=Ucieczka z lekcji|RANDKA=Spotkanie z crushem|KUMPEL=Kolega z ławki|DZWONEK=Oznajmia koniec lekcji|PRZERWA=Dziesięć minut między lekcjami|TABLICA=Pisze się na niej kredą lub pisakiem|DZIENNIK=Wpisują tam oceny|MATURA=Egzamin po liceum|PACZKA=Grupa najbliższych znajomych|FRYTKI=Chrupiące dodatki do kebaba|KARTKOWKA=Krótki sprawdzian na kartce|SPRAWDZIAN=Test z całego działu|WYCIECZKA=Wyjazd z klasą|STUDNIOWKA=Impreza sto dni przed maturą|IMPREZA=Spotkanie z muzyką i znajomymi|ENERGETYK=Napój z puszki dla zmęczonych|LADOWARKA=Ratuje telefon przy jednym procencie'}
+];
+const pw=s=>s.split('|').map(s=>{const[w,k]=s.split('=');return{w,k}});
+T.forEach(t=>t.w=pw(t.w));
+const SP=[
+{n:'Slang z sieci',e:'🔥',c:'#ff7a7a',p:60,w:'FOMO=Strach, że coś fajnego Cię omija|YOLO=Hasło: żyje się tylko raz|TROLL=Ktoś, kto prowokuje i wkurza w komentarzach|CHILL=Spokojny luz bez stresu|FAIL=Wpadka albo spektakularna porażka|ZONK=Pech i rozczarowanie|STALKOWAC=Szperać w czyimś profilu, żeby dowiedzieć się wszystkiego|SPOILER=Zdradzenie zakończenia filmu przed czasem|OGARNIAM=Slangowo: rozumiem, łapię|ZAJAWKA=Pasja, która Cię kompletnie wciągnęła|SZACUN=Okazanie uznania, slangowo: „…!”'},
+{n:'Seriale i kino',e:'🍿',c:'#8ed8ff',p:90,w:'NETFLIX=Platforma z serialami do maratonu|SERIAL=Film podzielony na odcinki|ODCINEK=Jedna część serialu|SEZON=Seria odcinków wydana razem|POPCORN=Przekąska do kina|KINO=Sala z wielkim ekranem i fotelami|AKTOR=Gra role w filmie|REZYSER=Kieruje planem filmowym|SCENARIUSZ=Tekst, z którego powstaje film|PREMIERA=Pierwszy pokaz filmu|MARATON=Oglądanie odcinków jeden po drugim'},
+{n:'Foodie',e:'🍔',c:'#ffb27a',p:120,w:'BURGER=Kotlet w bułce|SUSHI=Ryż z rybą zawinięty w wodorosty|ARBUZ=Zielony na zewnątrz, czerwony w środku|MAKARON=Spaghetti albo penne|CZEKOLADA=Słodka tabliczka z kakao|HERBATA=Gorący napój z torebki|NALESNIK=Cienki placek z nutellą|TORT=Dostajesz go na urodziny|BANAN=Żółty owoc, który lubią małpy|ZAPIEKANKA=Pieczywo z pieczarkami i serem, uliczna przekąska|PIERNIK=Korzenne ciasto na święta'},
+{n:'Zwierzaki',e:'🐾',c:'#7ef0c4',p:150,w:'CHOMIK=Chowa jedzenie w policzkach|PAPUGA=Kolorowy ptak, który powtarza słowa|ZOLW=Wolne zwierzę z pancerzem|DELFIN=Mądry ssak morski|SLON=Ma trąbę i wielkie uszy|ZYRAFA=Zwierzę z najdłuższą szyją|PANDA=Czarno-biała miłośniczka bambusa|PINGWIN=Ptak, który nie lata i żyje na lodzie|KROLIK=Skacze i chrupie marchewkę|WILK=Wyje do księżyca|MALPA=Skacze po lianach'},
+{n:'Podróże',e:'✈️',c:'#b9a6ff',p:180,w:'SAMOLOT=Lata w chmurach z pasażerami|PLAZA=Piasek, parasol i leżak|BILET=Bez niego nie wsiądziesz do pociągu|HOTEL=Miejsce na nocleg|MORZE=Słona woda i fale|PASZPORT=Dokument potrzebny na granicy|NAMIOT=Płócienny dom na biwaku|WAKACJE=Czas bez szkoły latem|PARYZ=Stolica Francji z wieżą Eiffla|LONDYN=Stolica Anglii z Big Benem|LOTNISKO=Stąd startują samoloty'}
+];
+SP.forEach(t=>t.w=pw(t.w));
+const SK=[['Róż','#ff5fa8',0],['Mięta','#4ee3a8',40],['Błękit','#5cc8ff',60],['Złoto','#ffcf2e',80],['Fiolet','#b28cff',100]];
+const CNT=[5,6,6,7,7];
+const lg=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+const ls=k=>{try{localStorage.setItem(k,'1')}catch(e){}};
+const rng=s=>()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+const shuf=(a,R)=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=R()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+let S,cur=0,G;
+try{G=JSON.parse(localStorage.getItem('k2g'))}catch(e){}
+G=Object.assign({c:0,sp:[],sk:[0],eq:0},G);
+const save=()=>{try{localStorage.setItem('k2g',JSON.stringify(G))}catch(e){}};
+const coins=()=>document.querySelectorAll('.coin').forEach(e=>e.textContent='🪙 '+G.c);
+const addCoins=n=>{G.c+=n;save();coins()};
+const skin=()=>document.documentElement.style.setProperty('--act',SK[G.eq]?.[1]||'#ff5fa8');
+
+function fit(g,w,r,c,d,N){
+ const L=w.length,dr=d,dc=1-d;
+ if(r<0||c<0||r+dr*(L-1)>=N||c+dc*(L-1)>=N)return -1;
+ if(g[r-dr]?.[c-dc]||g[r+dr*L]?.[c+dc*L])return -1;
+ let x=0;
+ for(let i=0;i<L;i++){
+  const y=r+dr*i,z=c+dc*i,q=g[y][z];
+  if(q){if(q.ch!==w[i]||(d?q.v:q.h))return -1;x++}
+  else if(g[y+dc]?.[z+dr]||g[y-dc]?.[z-dr])return -1;
+ }
+ return x;
+}
+function gen(ws,seed){
+ const R=rng(seed),N=23;let best;
+ for(let k=0;k<30;k++){
+  const g=Array.from({length:N},()=>Array(N).fill(null)),pl=[],cs=[];
+  const put=(w,r,c,d)=>{for(let i=0;i<w.w.length;i++){const y=r+d*i,x=c+(1-d)*i;let q=g[y][x];if(!q){q=g[y][x]={ch:w.w[i]};cs.push([y,x])}q[d?'v':'h']=1}pl.push({...w,r,c,d})};
+  const o=shuf(ws,R).sort((a,b)=>b.w.length-a.w.length);
+  put(o[0],11,11-(o[0].w.length>>1),0);
+  for(const w of o.slice(1)){
+   const cand=[];
+   for(const[y,x]of cs)for(let i=0;i<w.w.length;i++)if(w.w[i]===g[y][x].ch)for(const d of[0,1]){
+    const r=y-d*i,c=x-(1-d)*i,n=fit(g,w.w,r,c,d,N);if(n>0)cand.push([n+R(),r,c,d])}
+   if(cand.length){cand.sort((a,b)=>b[0]-a[0]);put(w,...cand[0].slice(1))}
+  }
+  const ys=cs.map(a=>a[0]),xs=cs.map(a=>a[1]);
+  const h=Math.max(...ys)-Math.min(...ys)+1,wd=Math.max(...xs)-Math.min(...xs)+1;
+  const sc=pl.length*1000-h*wd-Math.max(h,wd)*25;
+  if(!best||sc>best.sc)best={sc,g,pl,r0:Math.min(...ys),c0:Math.min(...xs),h,wd};
+ }
+ const{g,pl,r0,c0,h,wd}=best;
+ const G=Array.from({length:h},(_,r)=>Array.from({length:wd},(_,c)=>g[r+r0][c+c0]?.ch||''));
+ const words=pl.map(w=>({...w,r:w.r-r0,c:w.c-c0})),nm={};let n=0;
+ for(let r=0;r<h;r++)for(let c=0;c<wd;c++)if(words.some(w=>w.r===r&&w.c===c))nm[r+','+c]=++n;
+ words.forEach(w=>w.n=nm[w.r+','+w.c]);
+ words.sort((a,b)=>a.n-b.n||a.d-b.d);
+ return{g:G,words,rows:h,cols:wd,nm};
+}
+
+const cells=w=>Array.from({length:w.w.length},(_,i)=>[w.r+w.d*i,w.c+(1-w.d)*i]);
+const wordAt=(r,c,d)=>S.words.find(w=>w.d===d&&cells(w).some(a=>a[0]===r&&a[1]===c));
+const cw=()=>wordAt(S.r,S.c,S.d);
+const place=w=>{const e=cells(w).find(([r,c])=>!S.v[r][c])||cells(w)[0];S.r=e[0];S.c=e[1];S.d=w.d};
+const solved=w=>cells(w).every(([r,c])=>S.v[r][c]===S.g[r][c]);
+
+function show(id){['home','lvl','game','shop'].forEach(x=>$(x).hidden=x!==id);$('win').hidden=true;scrollTo(0,0)}
+function toast(m){const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toast.id);toast.id=setTimeout(()=>t.hidden=true,1800)}
+
+function home(){
+ $('themes').innerHTML=T.map((t,i)=>{const d=CNT.filter((_,j)=>lg('k2'+i+'-'+j)).length;
+  return`<button class="th" data-i="${i}" style="--c:${t.c}"><em>${t.e}</em><b>${t.n}</b><small>${d} z ${CNT.length} gotowe</small></button>`}).join('');
+ show('home');
+}
+function lvls(i){
+ cur=i;$('lt').textContent=T[i].e+' '+T[i].n;
+ $('lv').innerHTML=CNT.map((n,j)=>{const d=lg('k2'+i+'-'+j);return`<button data-l="${j}" class="${d?'ok':''}">${j+1}${d?' ✓':''}<small>${n} haseł</small></button>`}).join('');
+ show('lvl');
+}
+function begin(sub,seed,title,m){
+ S={...m,...gen(sub,seed),bad:new Set(),gv:new Set(),r:0,c:0,d:0,done:0,hints:0};
+ S.v=S.g.map(r=>r.map(()=>''));
+ $('gt').textContent=title;place(S.words[0]);show('game');draw();
+}
+function start(i,l,rnd){
+ const seed=rnd?Date.now()%1e9:(i+1)*97+l*13,t=T[i],o=CNT.slice(0,l).reduce((a,b)=>a+b,0);
+ begin(rnd?shuf(T.flatMap(x=>x.w),rng(seed)).slice(0,8):t.w.slice(o,o+CNT[l]),seed,rnd?'🎲 Losowa mieszanka':t.e+' '+t.n+', poziom '+(l+1),{i,l,rnd});
+}
+function openShop(){
+ coins();
+ $('sps').innerHTML=SP.map((t,j)=>{const o=G.sp.includes(j);return`<button class="th${o?'':' lk'}" data-j="${j}" style="--c:${t.c}"><em>${o?t.e:'🔒'}</em><b>${t.n}</b><small>${o?(lg('k2s'+j)?'zaliczone ✓':'zagraj'):'🪙 '+t.p}</small></button>`}).join('');
+ $('sks').innerHTML=SK.map((k,j)=>{const o=G.sk.includes(j);return`<button data-j="${j}" class="${G.eq===j?'eq':''}"><i style="background:${k[1]}"></i>${k[0]}<small>${G.eq===j?'wybrany':o?'wybierz':'🪙 '+k[2]}</small></button>`}).join('');
+ show('shop');
+}
+function draw(){
+ const w=cw(),inW=new Set(w?cells(w).map(a=>a.join()):[]);
+ const gr=$('grid');gr.style.setProperty('--n',S.cols);gr.style.gridTemplateColumns=`repeat(${S.cols},var(--cs))`;
+ gr.innerHTML=S.g.map((row,r)=>row.map((ch,c)=>{
+  if(!ch)return'<i></i>';
+  const k=r+','+c,n=S.nm[k];
+  return`<b data-r="${r}" data-c="${c}" class="${inW.has(k)?'w ':''}${r===S.r&&c===S.c?'a ':''}${S.bad.has(k)?'bad ':''}${S.gv.has(k)?'gv':''}">${n?`<s>${n}</s>`:''}${S.v[r][c]}</b>`}).join('')).join('');
+ $('cl').innerHTML=w?`<i>${w.n} ${w.d?'pionowo':'poziomo'}</i>${w.k} (${w.w.length})`:'';
+ const li=d=>S.words.map((x,j)=>x.d===d?`<li data-n="${j}" class="${x===w?'on ':''}${solved(x)?'dn':''}"><b>${x.n}</b>${x.k} (${x.w.length})</li>`:'').join('');
+ $('lA').innerHTML=li(0);$('lD').innerHTML=li(1);
+}
+function sel(r,c,tog){
+ if(tog&&S.r===r&&S.c===c){if(wordAt(r,c,1-S.d))S.d=1-S.d}
+ else{S.r=r;S.c=c;if(!wordAt(r,c,S.d))S.d=1-S.d}
+ draw();
+}
+function step(s){
+ const w=cw(),nr=S.r+S.d*s,nc=S.c+(1-S.d)*s;
+ if(w&&wordAt(nr,nc,S.d)===w){S.r=nr;S.c=nc;return true}return false;
+}
+function jump(s,eo){
+ const W=S.words,i=W.indexOf(cw());
+ for(let j=1;j<=W.length;j++){
+  const w=W[(i+s*j+W.length*2)%W.length];
+  if(!eo||cells(w).some(([r,c])=>!S.v[r][c])){place(w);return}
+ }
+}
+function type(L){
+ if(S.done)return;
+ const k=S.r+','+S.c;
+ if(!S.gv.has(k)){S.v[S.r][S.c]=L;S.bad.delete(k)}
+ if(!step(1))jump(1,true);
+ draw();win();
+}
+function back(){
+ if(S.done)return;
+ const k=S.r+','+S.c;
+ if(S.v[S.r][S.c]){if(!S.gv.has(k)){S.v[S.r][S.c]='';S.bad.delete(k)}}
+ else if(step(-1)){const k2=S.r+','+S.c;if(!S.gv.has(k2)){S.v[S.r][S.c]='';S.bad.delete(k2)}}
+ draw();
+}
+function mv(dr,dc){
+ S.d=dr?1:0;
+ if(S.g[S.r+dr]?.[S.c+dc]){S.r+=dr;S.c+=dc}
+ if(!cw())S.d=1-S.d;
+ draw();
+}
+function win(){
+ if(S.done||!S.g.every((row,r)=>row.every((ch,c)=>!ch||S.v[r][c]===ch)))return;
+ S.done=1;
+ const sp=S.sp!=null,k=sp?'k2s'+S.sp:S.rnd?'':'k2'+S.i+'-'+S.l,first=k&&!lg(k),m=[];
+ let g=first?(sp?40:20):S.rnd?8:5;
+ if(!S.hints&&(first||S.rnd)){g+=sp?20:10;m.push('bonus za grę bez podpowiedzi')}
+ if(k)ls(k);
+ if(first&&!sp&&T.reduce((n,_,i)=>n+CNT.filter((_,j)=>lg('k2'+i+'-'+j)).length,0)%5===0){g+=25;m.push('co piąta krzyżówka +25')}
+ addCoins(g);
+ $('wm').innerHTML='+'+g+' 🪙'+(m.length?'<br><small>'+m.join(', ')+'</small>':'');
+ setTimeout(()=>$('win').hidden=false,350);
+}
+
+$('themes').onclick=e=>{const b=e.target.closest('.th');if(b)lvls(+b.dataset.i)};
+$('lv').onclick=e=>{const b=e.target.closest('button');if(b)start(cur,+b.dataset.l)};
+$('rnd').onclick=()=>start(Math.random()*T.length|0,0,1);
+$('b1').onclick=home;
+$('b2').onclick=()=>S.sp!=null?openShop():S.rnd?home():lvls(S.i);
+$('mn').onclick=()=>S.sp!=null?openShop():S.rnd?home():lvls(S.i);
+$('nx2').onclick=()=>{const{i,l,rnd}=S;if(S.sp!=null)return openShop();rnd?start(Math.random()*T.length|0,0,1):l<CNT.length-1?start(i,l+1):lvls(i)};
+$('grid').onclick=e=>{const b=e.target.closest('b');if(b)sel(+b.dataset.r,+b.dataset.c,1)};
+$('lA').onclick=$('lD').onclick=e=>{const l=e.target.closest('li');if(l){place(S.words[+l.dataset.n]);draw()}};
+$('pv').onclick=()=>{jump(-1);draw()};
+$('nx').onclick=()=>{jump(1);draw()};
+$('chk').onclick=()=>{
+ S.bad=new Set();
+ S.g.forEach((row,r)=>row.forEach((ch,c)=>{if(ch&&S.v[r][c]&&S.v[r][c]!==ch)S.bad.add(r+','+c)}));
+ draw();toast(S.bad.size?'Czerwone pola to błędy':'Na razie wszystko dobrze 👌');
+};
+$('hnt').onclick=()=>{
+ if(S.done)return;
+ if(S.v[S.r][S.c]===S.g[S.r][S.c])return toast('To pole jest już dobre');
+ if(G.c<3)return toast('Podpowiedź kosztuje 3 🪙, a masz za mało');
+ addCoins(-3);S.hints++;
+ const k=S.r+','+S.c;S.v[S.r][S.c]=S.g[S.r][S.c];S.gv.add(k);S.bad.delete(k);
+ if(!step(1))jump(1,true);
+ draw();win();
+};
+$('kb').innerHTML=['QWERTYUIOP','ASDFGHJKL','ZXCVBNM⌫'].map(r=>'<div>'+[...r].map(k=>`<button data-k="${k}">${k}</button>`).join('')+'</div>').join('');
+$('kb').addEventListener('pointerdown',e=>{
+ const b=e.target.closest('button');if(!b)return;e.preventDefault();
+ b.dataset.k==='⌫'?back():type(b.dataset.k);
+});
+const P={ą:'a',ć:'c',ę:'e',ł:'l',ń:'n',ó:'o',ś:'s',ź:'z',ż:'z'},AR={ArrowUp:[-1,0],ArrowDown:[1,0],ArrowLeft:[0,-1],ArrowRight:[0,1]};
+addEventListener('keydown',e=>{
+ if($('game').hidden||!$('win').hidden||e.ctrlKey||e.metaKey||e.altKey)return;
+ const k=e.key,l=(P[k.toLowerCase()]||k).toUpperCase();
+ if(k.length===1&&/^[A-Z]$/.test(l))type(l);
+ else if(k==='Backspace')back();
+ else if(k==='Tab'||k==='Enter'){jump(e.shiftKey?-1:1);draw()}
+ else if(k===' ')sel(S.r,S.c,1);
+ else if(AR[k])mv(...AR[k]);
+ else return;
+ e.preventDefault();
+});
+$('shopb').onclick=openShop;$('b3').onclick=home;
+$('sps').onclick=e=>{const b=e.target.closest('button');if(!b)return;const j=+b.dataset.j,t=SP[j];
+ if(G.sp.includes(j))return begin(t.w,500+j,t.e+' '+t.n,{sp:j});
+ if(G.c<t.p)return toast('Brakuje '+(t.p-G.c)+' monet');
+ G.c-=t.p;G.sp.push(j);save();toast('Odblokowane: '+t.n);openShop();
+};
+$('sks').onclick=e=>{const b=e.target.closest('button');if(!b)return;const j=+b.dataset.j,k=SK[j];
+ if(!G.sk.includes(j)){if(G.c<k[2])return toast('Brakuje '+(k[2]-G.c)+' monet');G.c-=k[2];G.sk.push(j)}
+ G.eq=j;save();skin();openShop();
+};
+$('h').innerHTML='KRZYŻÓWKI'.split('').map((l,i)=>`<span style="--i:${i}">${l}</span>`).join('');
+coins();skin();home();
+</script>
+</body>
+</html>
